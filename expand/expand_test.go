@@ -28,8 +28,6 @@ func testExpansionWithOptions(t *testing.T, address string, output string, optio
 
 
 func TestEnglishExpansions(t *testing.T) {
-    t.Log("Testing English expansions")
-
     testExpansion(t, "123 Main St", "123 main street")
 
     englishOptions := getDefaultExpansionOptions()
