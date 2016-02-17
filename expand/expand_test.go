@@ -1,13 +1,10 @@
 package postal
 
-import (
-    "strings"
-    "testing"
-)
+import "testing"
 
 func testExpansionInOutput(t *testing.T, address string, output string, expansions []string) {
     for i := 0; i < len(expansions); i++ {
-        if strings.Compare(expansions[i], output) == 0 {
+        if expansions[i] == output {
             return
         }
     }
