@@ -9,6 +9,8 @@ Go/cgo interface to [libpostal](https://github.com/openvenues/libpostal), a C li
 To expand address strings into normalized forms suitable for geocoder queries:
 
 ```go
+package main
+
 import (
     "fmt"
     expand "github.com/openvenues/gopostal/expand"
@@ -26,16 +28,17 @@ func main() {
 To parse addresses into components:
 
 ```go
+package main
+
 import (
     "fmt"
     parser "github.com/openvenues/gopostal/parser"
 )
 
 func main() {
-    
+    parsed := parser.ParseAddress("781 Franklin Ave Crown Heights Brooklyn NY 11216 USA")
+    fmt.Println(parsed)
 }
-parsed := parser.ParseAddress("781 Franklin Ave Crown Heights Brooklyn NY 11216 USA")
-fmt.Println(parsed)
 ```
 
 ## Prerequisites
@@ -76,7 +79,7 @@ go get github.com/openvenues/gopostal/expand
 
 For parsing:
 ```
-go get github.com/openvenues/gopostal/expand
+go get github.com/openvenues/gopostal/parser
 ```
 
 ## Tests
