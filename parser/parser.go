@@ -16,23 +16,23 @@ func init() {
 }
 
 type ParserOptions struct {
-    language string
-    country string
+    Language string
+    Country string
 }
 
 
 func getDefaultParserOptions() ParserOptions {
     return ParserOptions {
-        language: "",
-        country: "",
+        Language: "",
+        Country: "",
     }
 }
 
 var parserDefaultOptions = getDefaultParserOptions()
 
 type ParsedComponent struct {
-    component string
-    label string
+    Component string
+    Label string
 }
 
 func ParseAddressOptions(address string, options ParserOptions) []ParsedComponent {
@@ -43,15 +43,15 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
     //ptr_size := unsafe.Sizeof(b)
 
     cOptions := C.get_libpostal_address_parser_default_options()
-    if options.language != "" {
-        cLanguage := C.CString(options.language)
+    if options.Language != "" {
+        cLanguage := C.CString(options.Language)
         defer C.free(unsafe.Pointer(cLanguage))
 
         cOptions.language = cLanguage
     }
 
-    if options.country != "" {
-        cCountry := C.CString(options.country)
+    if options.Country != "" {
+        cCountry := C.CString(options.Country)
         defer C.free(unsafe.Pointer(cCountry))
 
         cOptions.country = cCountry
@@ -80,8 +80,8 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
     var i uint64
     for i = 0; i < numComponents; i++ {
         parsedComponents[i] = ParsedComponent{
-            component: C.GoString(cComponentsPtr[i]),
-            label: C.GoString(cLabelsPtr[i]),
+            Component: C.GoString(cComponentsPtr[i]),
+            Label: C.GoString(cLabelsPtr[i]),
         }
     }
 
