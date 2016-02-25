@@ -28,7 +28,7 @@ func TestEnglishExpansions(t *testing.T) {
     testExpansion(t, "123 Main St", "123 main street")
 
     englishOptions := getDefaultExpansionOptions()
-    englishOptions.languages = []string{"en"}
+    englishOptions.Languages = []string{"en"}
 
     testExpansionWithOptions(t, "30 West Twenty-sixth St Fl No. 7", "30 west 26th street floor number 7", englishOptions) 
     testExpansionWithOptions(t, "Thirty W 26th St Fl #7", "30 west 26th street floor number 7", englishOptions)
@@ -38,7 +38,7 @@ func TestEnglishExpansions(t *testing.T) {
 
 func TestMultilingualExpansions(t *testing.T) {
     multilingualOptions := getDefaultExpansionOptions()
-    multilingualOptions.languages = []string{"en", "fr", "de"}
+    multilingualOptions.Languages = []string{"en", "fr", "de"}
 
     testExpansionWithOptions(t, "st", "sankt", multilingualOptions)
     testExpansionWithOptions(t, "st", "saint", multilingualOptions)
