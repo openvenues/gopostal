@@ -31,8 +31,8 @@ func getDefaultParserOptions() ParserOptions {
 var parserDefaultOptions = getDefaultParserOptions()
 
 type ParsedComponent struct {
-    Value string
-    Label string
+    Label string `json:"label"`
+    Value string `json:"value"`
 }
 
 func ParseAddressOptions(address string, options ParserOptions) []ParsedComponent {
@@ -80,8 +80,8 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
     var i uint64
     for i = 0; i < numComponents; i++ {
         parsedComponents[i] = ParsedComponent{
-            Value: C.GoString(cComponentsPtr[i]),
             Label: C.GoString(cLabelsPtr[i]),
+            Value: C.GoString(cComponentsPtr[i]),
         }
     }
 
