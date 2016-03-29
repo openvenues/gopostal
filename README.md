@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-    expansions := expand.ExpandAddress("Quatre-vignt-douze Ave des Ave des Champs-Élysées")
+    expansions := expand.ExpandAddress("Quatre-vingt-douze Ave des Ave des Champs-Élysées")
 
     for i := 0; i < len(expansions); i++ {
         fmt.Println(expansions[i])
