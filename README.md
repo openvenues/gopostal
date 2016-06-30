@@ -45,9 +45,14 @@ func main() {
 
 Before using the Go bindings, you must install the libpostal C library. Make sure you have the following prerequisites:
 
-**On Linux (Ubuntu)**
+**On Ubuntu/Debian**
 ```
-sudo apt-get install libsnappy-dev autoconf automake libtool pkg-config
+sudo apt-get install curl libsnappy-dev autoconf automake libtool pkg-config
+```
+
+**On CentOS/RHEL**
+```
+sudo yum install snappy snappy-devel autoconf automake libtool pkgconfig
 ```
 
 **On Mac OSX**
