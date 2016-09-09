@@ -11,6 +11,7 @@ import "C"
 import (
     "unsafe"
     "log"
+    "unicode/utf8"
 )
 
 func init() {
@@ -87,6 +88,10 @@ func getDefaultExpansionOptions() ExpandOptions {
 var libpostalDefaultOptions = getDefaultExpansionOptions()
 
 func ExpandAddressOptions(address string, options ExpandOptions) []string {
+    if !utf8.ValidString(address) {
+        return nil
+    }
+
     cAddress := C.CString(address)
     defer C.free(unsafe.Pointer(cAddress))
 
@@ -151,7 +156,6 @@ func ExpandAddressOptions(address string, options ExpandOptions) []string {
 }
 
 func ExpandAddress(address string) []string {
-    expansions := ExpandAddressOptions(address, libpostalDefaultOptions);
-    return expansions
+    return ExpandAddressOptions(address, libpostalDefaultOptions)
 }
 
