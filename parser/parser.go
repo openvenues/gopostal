@@ -6,8 +6,12 @@ package postal
 #include <stdlib.h>
 */
 import "C"
-import "log"
-import "unsafe"
+
+import (
+    "log"
+    "unsafe"
+    "unicode/utf8"
+)
 
 func init() {
     if (!bool(C.libpostal_setup()) || !bool(C.libpostal_setup_parser())) {
@@ -36,6 +40,11 @@ type ParsedComponent struct {
 }
 
 func ParseAddressOptions(address string, options ParserOptions) []ParsedComponent {
+    if !utf8.ValidString(address) {
+        return nil
+    }
+
+
     cAddress := C.CString(address)
     defer C.free(unsafe.Pointer(cAddress))
 
@@ -91,6 +100,5 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
 }
 
 func ParseAddress(address string) []ParsedComponent {
-    parsedComponents := ParseAddressOptions(address, parserDefaultOptions);
-    return parsedComponents
+    return ParseAddressOptions(address, parserDefaultOptions)
 }
