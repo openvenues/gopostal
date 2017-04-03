@@ -49,47 +49,4 @@ func TestParseUSAddress(t *testing.T) {
               },
               `[{"label":"house_number","value":"781"},{"label":"road","value":"franklin ave"},{"label":"suburb","value":"crown heights"},{"label":"city_district","value":"brooklyn"},{"label":"city","value":"nyc"},{"label":"state","value":"ny"},{"label":"postcode","value":"11216"},{"label":"country","value":"usa"}]`,
               )
-
-    testParse(t, "whole foods ny",
-              []ParsedComponent {
-                {"house", "whole foods"},
-                {"state", "ny"},
-              },
-              `[{"label":"house","value":"whole foods"},{"label":"state","value":"ny"}]`,
-              )
-
-    testParse(t, "1917/2 Pike Drive",
-              []ParsedComponent {
-                {"house_number", "1917 / 2"},
-                {"road", "pike drive"},
-              },
-              `[{"label":"house_number","value":"1917 / 2"},{"label":"road","value":"pike drive"}]`,
-              )
-
-    testParse(t, "3437 warwickshire rd,pa",
-              []ParsedComponent {
-                {"house_number", "3437"},
-                {"road", "warwickshire rd"},
-                {"state", "pa"},
-              },
-              `[{"label":"house_number","value":"3437"},{"label":"road","value":"warwickshire rd"},{"label":"state","value":"pa"}]`,
-              )
-
-    testParse(t, "3437 warwickshire rd, pa",
-              []ParsedComponent {
-                {"house_number", "3437"},
-                {"road", "warwickshire rd"},
-                {"state", "pa"},
-              },
-              `[{"label":"house_number","value":"3437"},{"label":"road","value":"warwickshire rd"},{"label":"state","value":"pa"}]`,
-              )
-
-    testParse(t, "3437 warwickshire rd pa",
-              []ParsedComponent {
-                {"house_number", "3437"},
-                {"road", "warwickshire rd"},
-                {"state", "pa"},
-              },
-              `[{"label":"house_number","value":"3437"},{"label":"road","value":"warwickshire rd"},{"label":"state","value":"pa"}]`,
-              )
 }
