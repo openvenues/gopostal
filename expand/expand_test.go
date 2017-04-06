@@ -47,5 +47,5 @@ func TestMultilingualExpansions(t *testing.T) {
 
 
 func TestNonASCIIExpansions(t *testing.T) {
-    testExpansion(t, "Friedrichstraße 128, Berlin, Germany", "friedrich strasse 128 berlin germany")
+    testExpansion(t, "Friedrichstraße 128, Berlin, Germany", "friedrich straße 128 berlin germany")
 }

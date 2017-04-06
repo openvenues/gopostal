@@ -47,17 +47,17 @@ Before using the Go bindings, you must install the libpostal C library. Make sur
 
 **On Ubuntu/Debian**
 ```
-sudo apt-get install curl libsnappy-dev autoconf automake libtool pkg-config
+sudo apt-get install curl autoconf automake libtool pkg-config
 ```
 
 **On CentOS/RHEL**
 ```
-sudo yum install snappy snappy-devel autoconf automake libtool pkgconfig
+sudo yum install curl autoconf automake libtool pkgconfig
 ```
 
 **On Mac OSX**
 ```
-sudo brew install snappy autoconf automake libtool pkg-config
+sudo brew install curl autoconf automake libtool pkg-config
 ```
 
 **Installing libpostal**
