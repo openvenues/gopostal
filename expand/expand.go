@@ -11,8 +11,11 @@ import "C"
 import (
     "unsafe"
     "log"
+    "sync"
     "unicode/utf8"
 )
+
+var mu sync.Mutex
 
 func init() {
     if (!bool(C.libpostal_setup()) || !bool(C.libpostal_setup_language_classifier())) {
@@ -92,6 +95,9 @@ func ExpandAddressOptions(address string, options ExpandOptions) []string {
     if !utf8.ValidString(address) {
         return nil
     }
+
+    mu.Lock()
+    defer mu.Unlock()
 
     cAddress := C.CString(address)
     defer C.free(unsafe.Pointer(cAddress))
