@@ -9,9 +9,12 @@ import "C"
 
 import (
     "log"
+    "sync"
     "unsafe"
     "unicode/utf8"
 )
+
+var mu sync.Mutex
 
 func init() {
     if (!bool(C.libpostal_setup()) || !bool(C.libpostal_setup_parser())) {
@@ -44,12 +47,11 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
         return nil
     }
 
+    mu.Lock()
+    defer mu.Unlock()
 
     cAddress := C.CString(address)
     defer C.free(unsafe.Pointer(cAddress))
-
-    //var b *C.char
-    //ptr_size := unsafe.Sizeof(b)
 
     cOptions := C.libpostal_get_address_parser_default_options()
     if options.Language != "" {
