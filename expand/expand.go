@@ -65,7 +65,7 @@ type ExpandOptions struct {
 
 var cDefaultOptions = C.libpostal_get_default_options()
 
-func getDefaultExpansionOptions() ExpandOptions {
+func GetDefaultExpansionOptions() ExpandOptions {
     return ExpandOptions{
         Languages: nil,
         AddressComponents: uint16(cDefaultOptions.address_components),
@@ -89,7 +89,7 @@ func getDefaultExpansionOptions() ExpandOptions {
     }
 }
 
-var libpostalDefaultOptions = getDefaultExpansionOptions()
+var libpostalDefaultOptions = GetDefaultExpansionOptions()
 
 func ExpandAddressOptions(address string, options ExpandOptions) []string {
     if !utf8.ValidString(address) {
