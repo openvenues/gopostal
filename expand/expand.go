@@ -159,6 +159,7 @@ func ExpandAddressOptions(address string, options ExpandOptions) []string {
         expansions[i] = C.GoString(cExpansionsPtr[i])
     }
 
+    C.libpostal_expansion_array_destroy(cExpansions, cNumExpansions)
     return expansions
 }
 
