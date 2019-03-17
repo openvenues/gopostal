@@ -9,7 +9,7 @@ import (
 )
 
 func testParse(t *testing.T, address string, expectedOutput []postal.ParsedComponent, expectedJSON string) {
-	parsedComponents := postal.ParseAddress(address)
+	parsedComponents := postal.ParseAddress(address, postal.DefaultParserOptions)
 
 	if len(parsedComponents) != len(expectedOutput) || !reflect.DeepEqual(parsedComponents, expectedOutput) {
 		t.Error("parsed != expected: ", parsedComponents, "!=", expectedOutput)

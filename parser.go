@@ -17,27 +17,20 @@ type ParserOptions struct {
 	Country  string
 }
 
-func getDefaultParserOptions() ParserOptions {
-	return ParserOptions{
-		Language: "",
-		Country:  "",
-	}
+var DefaultParserOptions = ParserOptions{
+	Language: "",
+	Country:  "",
 }
-
-var parserDefaultOptions = getDefaultParserOptions()
 
 type ParsedComponent struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
 }
 
-func ParseAddressOptions(address string, options ParserOptions) []ParsedComponent {
+func ParseAddress(address string, options ParserOptions) []ParsedComponent {
 	if !utf8.ValidString(address) {
 		return nil
 	}
-
-	mu.Lock()
-	defer mu.Unlock()
 
 	cAddress := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddress))
@@ -88,8 +81,4 @@ func ParseAddressOptions(address string, options ParserOptions) []ParsedComponen
 	C.libpostal_address_parser_response_destroy(cAddressParserResponsePtr)
 
 	return parsedComponents
-}
-
-func ParseAddress(address string) []ParsedComponent {
-	return ParseAddressOptions(address, parserDefaultOptions)
 }

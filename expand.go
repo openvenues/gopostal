@@ -13,91 +13,20 @@ import (
 	"unsafe"
 )
 
-const (
-	AddressNone        = C.LIBPOSTAL_ADDRESS_NONE
-	AddressAny         = C.LIBPOSTAL_ADDRESS_ANY
-	AddressName        = C.LIBPOSTAL_ADDRESS_NAME
-	AddressHouseNumber = C.LIBPOSTAL_ADDRESS_HOUSE_NUMBER
-	AddressStreet      = C.LIBPOSTAL_ADDRESS_STREET
-	AddressUnit        = C.LIBPOSTAL_ADDRESS_UNIT
-	AddressLevel       = C.LIBPOSTAL_ADDRESS_LEVEL
-	AddressStaircase   = C.LIBPOSTAL_ADDRESS_STAIRCASE
-	AddressEntrance    = C.LIBPOSTAL_ADDRESS_ENTRANCE
-	AddressCategory    = C.LIBPOSTAL_ADDRESS_CATEGORY
-	AddressNear        = C.LIBPOSTAL_ADDRESS_NEAR
-	AddressToponym     = C.LIBPOSTAL_ADDRESS_TOPONYM
-	AddressPostalCode  = C.LIBPOSTAL_ADDRESS_POSTAL_CODE
-	AddressPoBox       = C.LIBPOSTAL_ADDRESS_PO_BOX
-	AddressAll         = C.LIBPOSTAL_ADDRESS_ALL
-)
-
-type ExpandOptions struct {
-	Languages              []string
-	AddressComponents      uint16
-	LatinAscii             bool
-	Transliterate          bool
-	StripAccents           bool
-	Decompose              bool
-	Lowercase              bool
-	TrimString             bool
-	ReplaceWordHyphens     bool
-	DeleteWordHyphens      bool
-	ReplaceNumericHyphens  bool
-	DeleteNumericHyphens   bool
-	SplitAlphaFromNumeric  bool
-	DeleteFinalPeriods     bool
-	DeleteAcronymPeriods   bool
-	DropEnglishPossessives bool
-	DeleteApostrophes      bool
-	ExpandNumex            bool
-	RomanNumerals          bool
-}
-
-var cDefaultOptions = C.libpostal_get_default_options()
-
-func GetDefaultExpansionOptions() ExpandOptions {
-	return ExpandOptions{
-		Languages:              nil,
-		AddressComponents:      uint16(cDefaultOptions.address_components),
-		LatinAscii:             bool(cDefaultOptions.latin_ascii),
-		Transliterate:          bool(cDefaultOptions.transliterate),
-		StripAccents:           bool(cDefaultOptions.strip_accents),
-		Decompose:              bool(cDefaultOptions.decompose),
-		Lowercase:              bool(cDefaultOptions.lowercase),
-		TrimString:             bool(cDefaultOptions.trim_string),
-		ReplaceWordHyphens:     bool(cDefaultOptions.replace_word_hyphens),
-		DeleteWordHyphens:      bool(cDefaultOptions.delete_word_hyphens),
-		ReplaceNumericHyphens:  bool(cDefaultOptions.replace_numeric_hyphens),
-		DeleteNumericHyphens:   bool(cDefaultOptions.delete_numeric_hyphens),
-		SplitAlphaFromNumeric:  bool(cDefaultOptions.split_alpha_from_numeric),
-		DeleteFinalPeriods:     bool(cDefaultOptions.delete_final_periods),
-		DeleteAcronymPeriods:   bool(cDefaultOptions.delete_acronym_periods),
-		DropEnglishPossessives: bool(cDefaultOptions.drop_english_possessives),
-		DeleteApostrophes:      bool(cDefaultOptions.delete_apostrophes),
-		ExpandNumex:            bool(cDefaultOptions.expand_numex),
-		RomanNumerals:          bool(cDefaultOptions.roman_numerals),
-	}
-}
-
-var libpostalDefaultOptions = GetDefaultExpansionOptions()
-
-func ExpandAddressOptions(address string, options ExpandOptions) []string {
+func ExpandAddress(address string, options NormalizeOptions) []string {
 	if !utf8.ValidString(address) {
 		return nil
 	}
 
-	mu.Lock()
-	defer mu.Unlock()
-
 	cAddress := C.CString(address)
 	defer C.free(unsafe.Pointer(cAddress))
 
-	var char_ptr *C.char
-	ptr_size := unsafe.Sizeof(char_ptr)
+	var charPtr *C.char
+	ptrSize := unsafe.Sizeof(charPtr)
 
 	cOptions := C.libpostal_get_default_options()
 	if options.Languages != nil {
-		cLanguages := C.calloc(C.size_t(len(options.Languages)), C.size_t(ptr_size))
+		cLanguages := C.calloc(C.size_t(len(options.Languages)), C.size_t(ptrSize))
 		cLanguagesPtr := (*[1 << 30](*C.char))(unsafe.Pointer(cLanguages))
 
 		defer C.free(unsafe.Pointer(cLanguages))
@@ -115,7 +44,7 @@ func ExpandAddressOptions(address string, options ExpandOptions) []string {
 	}
 
 	cOptions.address_components = C.uint16_t(options.AddressComponents)
-	cOptions.latin_ascii = C.bool(options.LatinAscii)
+	cOptions.latin_ascii = C.bool(options.LatinASCII)
 	cOptions.transliterate = C.bool(options.Transliterate)
 	cOptions.strip_accents = C.bool(options.StripAccents)
 	cOptions.decompose = C.bool(options.Decompose)
@@ -151,8 +80,4 @@ func ExpandAddressOptions(address string, options ExpandOptions) []string {
 
 	C.libpostal_expansion_array_destroy(cExpansions, cNumExpansions)
 	return expansions
-}
-
-func ExpandAddress(address string) []string {
-	return ExpandAddressOptions(address, libpostalDefaultOptions)
 }

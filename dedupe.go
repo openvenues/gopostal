@@ -15,24 +15,19 @@ type DuplicateOptions struct {
 }
 
 const (
-	NullDuplicateStatus          DuplicateStatus = C.LIBPOSTAL_NULL_DUPLICATE_STATUS
-	NonDuplicate                 DuplicateStatus = C.LIBPOSTAL_NON_DUPLICATE
-	PossibleDuplicateNeedsReview DuplicateStatus = C.LIBPOSTAL_POSSIBLE_DUPLICATE_NEEDS_REVIEW
-	LikelyDuplicate              DuplicateStatus = C.LIBPOSTAL_LIKELY_DUPLICATE
-	ExactDuplicate               DuplicateStatus = C.LIBPOSTAL_EXACT_DUPLICATE
+	DuplicateStatusNullDuplicateStatus          DuplicateStatus = C.LIBPOSTAL_NULL_DUPLICATE_STATUS
+	DuplicateStatusNonDuplicate                 DuplicateStatus = C.LIBPOSTAL_NON_DUPLICATE
+	DuplicateStatusPossibleDuplicateNeedsReview DuplicateStatus = C.LIBPOSTAL_POSSIBLE_DUPLICATE_NEEDS_REVIEW
+	DuplicateStatusLikelyDuplicate              DuplicateStatus = C.LIBPOSTAL_LIKELY_DUPLICATE
+	DuplicateStatusExactDuplicate               DuplicateStatus = C.LIBPOSTAL_EXACT_DUPLICATE
 )
 
-func GetDefaultDuplicateOptions() DuplicateOptions {
-	return DuplicateOptions{
-		NumLanguages: 0,
-		Languages:    nil,
-	}
+var DefaultDuplicateOptions = DuplicateOptions{
+	NumLanguages: 0,
+	Languages:    nil,
 }
 
-func IsDuplicate(addressComponent uint16, value1, value2 string, options DuplicateOptions) DuplicateStatus {
-	mu.Lock()
-	defer mu.Unlock()
-
+func IsDuplicate(addressComponent AddressComponent, value1, value2 string, options DuplicateOptions) DuplicateStatus {
 	cValue1 := C.CString(value1)
 	defer C.free(unsafe.Pointer(cValue1))
 
@@ -76,5 +71,5 @@ func IsDuplicate(addressComponent uint16, value1, value2 string, options Duplica
 		return DuplicateStatus(C.libpostal_is_postal_code_duplicate(cValue1, cValue2, cOptions))
 	}
 
-	return 0
+	return DuplicateStatusNullDuplicateStatus
 }
