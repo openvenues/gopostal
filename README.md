@@ -30,6 +30,7 @@ $ sudo brew install curl autoconf automake libtool pkg-config
 ```
 $ git clone https://github.com/openvenues/libpostal
 $ cd libpostal
+$ git checkout tags/v1.1-alpha -b v1.1-alpha
 $ ./bootstrap.sh
 $ ./configure
 $ make
