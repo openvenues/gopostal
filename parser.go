@@ -17,9 +17,8 @@ type ParserOptions struct {
 	Country  string
 }
 
-var DefaultParserOptions = ParserOptions{
-	Language: "",
-	Country:  "",
+func DefaultParserOptions() ParserOptions {
+	return ParserOptions{}
 }
 
 type ParsedComponent struct {
@@ -66,7 +65,6 @@ func ParseAddress(address string, options ParserOptions) []ParsedComponent {
 
 	parsedComponents := make([]ParsedComponent, numComponents)
 
-	// Accessing a C array
 	cComponentsPtr := (*[1 << 30](*C.char))(unsafe.Pointer(cComponents))
 	cLabelsPtr := (*[1 << 30](*C.char))(unsafe.Pointer(cLabels))
 
@@ -81,4 +79,8 @@ func ParseAddress(address string, options ParserOptions) []ParsedComponent {
 	C.libpostal_address_parser_response_destroy(cAddressParserResponsePtr)
 
 	return parsedComponents
+}
+
+func ParserPrintFeatures(b bool) bool {
+	return bool(C.libpostal_parser_print_features(C.bool(b)))
 }

@@ -8,57 +8,58 @@ package postal
 import "C"
 
 import (
+	"fmt"
 	"log"
 )
 
 func init() {
-	if !bool(C.libpostal_setup()) || !bool(C.libpostal_setup_language_classifier()) {
-		// if !bool(C.libpostal_setup()) || !bool(C.libpostal_setup_language_classifier()) || !bool(C.libpostal_setup_parser() {
-		log.Fatal("Could not load libpostal")
+	err := Setup()
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 }
 
-type AddressComponent uint16
+func Setup() error {
+	if !bool(C.libpostal_setup()) {
+		return fmt.Errorf("Could not load libpostal_setup")
+	}
+	if !bool(C.libpostal_setup_language_classifier()) {
+		return fmt.Errorf("Could not load libpostal_setup_language_classifier")
+	}
+	if !bool(C.libpostal_setup_parser()) {
+		return fmt.Errorf("Could not load libpostal_setup_parser")
+	}
+
+	return nil
+}
+
+func Teardown() {
+	C.libpostal_teardown()
+	C.libpostal_teardown_language_classifier()
+	C.libpostal_teardown_parser()
+}
 
 const (
-	AddressNone        AddressComponent = C.LIBPOSTAL_ADDRESS_NONE
-	AddressAny         AddressComponent = C.LIBPOSTAL_ADDRESS_ANY
-	AddressName        AddressComponent = C.LIBPOSTAL_ADDRESS_NAME
-	AddressHouseNumber AddressComponent = C.LIBPOSTAL_ADDRESS_HOUSE_NUMBER
-	AddressStreet      AddressComponent = C.LIBPOSTAL_ADDRESS_STREET
-	AddressUnit        AddressComponent = C.LIBPOSTAL_ADDRESS_UNIT
-	AddressLevel       AddressComponent = C.LIBPOSTAL_ADDRESS_LEVEL
-	AddressStaircase   AddressComponent = C.LIBPOSTAL_ADDRESS_STAIRCASE
-	AddressEntrance    AddressComponent = C.LIBPOSTAL_ADDRESS_ENTRANCE
-	AddressCategory    AddressComponent = C.LIBPOSTAL_ADDRESS_CATEGORY
-	AddressNear        AddressComponent = C.LIBPOSTAL_ADDRESS_NEAR
-	AddressToponym     AddressComponent = C.LIBPOSTAL_ADDRESS_TOPONYM
-	AddressPostalCode  AddressComponent = C.LIBPOSTAL_ADDRESS_POSTAL_CODE
-	AddressPoBox       AddressComponent = C.LIBPOSTAL_ADDRESS_PO_BOX
-	AddressAll         AddressComponent = C.LIBPOSTAL_ADDRESS_ALL
-)
-
-const (
-	AddressParserLabelHouse         = "house"
-	AddressParserLabelHouseNumber   = "house_number"
-	AddressParserLabelPoBox         = "po_box"
-	AddressParserLabelBuilding      = "building"
-	AddressParserLabelEntrance      = "entrance"
-	AddressParserLabelStaircase     = "staircase"
-	AddressParserLabelLevel         = "level"
-	AddressParserLabelUnit          = "unit"
-	AddressParserLabelRoad          = "road"
-	AddressParserLabelMetroStation  = "metro_station"
-	AddressParserLabelSuburb        = "suburb"
-	AddressParserLabelCityDistrict  = "city_district"
-	AddressParserLabelCity          = "city"
-	AddressParserLabelStateDistrict = "state_district"
-	AddressParserLabelIsland        = "island"
-	AddressParserLabelState         = "state"
-	AddressParserLabelPostalCode    = "postcode"
-	AddressParserLabelCountryRegion = "country_region"
-	AddressParserLabelCountry       = "country"
-	AddressParserLabelWorldRegion   = "world_region"
-	AddressParserLabelWebsite       = "website"
-	AddressParserLabelTelephone     = "phone"
+	AddressLabelHouse         = "house"
+	AddressLabelHouseNumber   = "house_number"
+	AddressLabelPoBox         = "po_box"
+	AddressLabelBuilding      = "building"
+	AddressLabelEntrance      = "entrance"
+	AddressLabelStaircase     = "staircase"
+	AddressLabelLevel         = "level"
+	AddressLabelUnit          = "unit"
+	AddressLabelRoad          = "road"
+	AddressLabelMetroStation  = "metro_station"
+	AddressLabelSuburb        = "suburb"
+	AddressLabelCityDistrict  = "city_district"
+	AddressLabelCity          = "city"
+	AddressLabelStateDistrict = "state_district"
+	AddressLabelIsland        = "island"
+	AddressLabelState         = "state"
+	AddressLabelPostalCode    = "postcode"
+	AddressLabelCountryRegion = "country_region"
+	AddressLabelCountry       = "country"
+	AddressLabelWorldRegion   = "world_region"
+	AddressLabelWebsite       = "website"
+	AddressLabelTelephone     = "phone"
 )

@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/skyline-ai/postal"
+	"github.com/stretchr/testify/assert"
 )
 
 func testParse(t *testing.T, address string, expectedOutput []postal.ParsedComponent, expectedJSON string) {
-	parsedComponents := postal.ParseAddress(address, postal.DefaultParserOptions)
+	parsedComponents := postal.ParseAddress(address, postal.DefaultParserOptions())
 
 	if len(parsedComponents) != len(expectedOutput) || !reflect.DeepEqual(parsedComponents, expectedOutput) {
 		t.Error("parsed != expected: ", parsedComponents, "!=", expectedOutput)
@@ -51,4 +52,9 @@ func TestParseUSAddress(t *testing.T) {
 		},
 		`[{"label":"house_number","value":"781"},{"label":"road","value":"franklin ave"},{"label":"suburb","value":"crown heights"},{"label":"city_district","value":"brooklyn"},{"label":"city","value":"nyc"},{"label":"state","value":"ny"},{"label":"postcode","value":"11216"},{"label":"country","value":"usa"}]`,
 	)
+}
+
+func TestParserPrintFeatures(t *testing.T) {
+	b := postal.ParserPrintFeatures(true)
+	assert.True(t, b)
 }

@@ -24,24 +24,27 @@ type NearDupeHashOptions struct {
 	NameAndAddressKeys            bool
 	NameOnlyKeys                  bool
 	AddressOnlyKeys               bool
+	Languages                     []string
 }
 
-var cDefaultNearDupeHashOptions = C.libpostal_get_near_dupe_hash_default_options()
-
-var DefaultNearDupeHashOptions = NearDupeHashOptions{
-	WithName:                      bool(cDefaultNearDupeHashOptions.with_name),
-	WithAddress:                   bool(cDefaultNearDupeHashOptions.with_address),
-	WithUnit:                      bool(cDefaultNearDupeHashOptions.with_unit),
-	WithCityOrEquivalent:          bool(cDefaultNearDupeHashOptions.with_city_or_equivalent),
-	WithSmallContainingBoundaries: bool(cDefaultNearDupeHashOptions.with_small_containing_boundaries),
-	WithPostalCode:                bool(cDefaultNearDupeHashOptions.with_postal_code),
-	WithLatLon:                    bool(cDefaultNearDupeHashOptions.with_latlon),
-	Latitude:                      float64(cDefaultNearDupeHashOptions.latitude),
-	Longitude:                     float64(cDefaultNearDupeHashOptions.longitude),
-	GeohashPrecision:              uint32(cDefaultNearDupeHashOptions.geohash_precision),
-	NameAndAddressKeys:            bool(cDefaultNearDupeHashOptions.name_and_address_keys),
-	NameOnlyKeys:                  bool(cDefaultNearDupeHashOptions.name_only_keys),
-	AddressOnlyKeys:               bool(cDefaultNearDupeHashOptions.address_only_keys),
+func DefaultNearDupeHashOptions() NearDupeHashOptions {
+	cDefaultNearDupeHashOptions := C.libpostal_get_near_dupe_hash_default_options()
+	return NearDupeHashOptions{
+		WithName:                      bool(cDefaultNearDupeHashOptions.with_name),
+		WithAddress:                   bool(cDefaultNearDupeHashOptions.with_address),
+		WithUnit:                      bool(cDefaultNearDupeHashOptions.with_unit),
+		WithCityOrEquivalent:          bool(cDefaultNearDupeHashOptions.with_city_or_equivalent),
+		WithSmallContainingBoundaries: bool(cDefaultNearDupeHashOptions.with_small_containing_boundaries),
+		WithPostalCode:                bool(cDefaultNearDupeHashOptions.with_postal_code),
+		WithLatLon:                    bool(cDefaultNearDupeHashOptions.with_latlon),
+		Latitude:                      float64(cDefaultNearDupeHashOptions.latitude),
+		Longitude:                     float64(cDefaultNearDupeHashOptions.longitude),
+		GeohashPrecision:              uint32(cDefaultNearDupeHashOptions.geohash_precision),
+		NameAndAddressKeys:            bool(cDefaultNearDupeHashOptions.name_and_address_keys),
+		NameOnlyKeys:                  bool(cDefaultNearDupeHashOptions.name_only_keys),
+		AddressOnlyKeys:               bool(cDefaultNearDupeHashOptions.address_only_keys),
+		Languages:                     nil,
+	}
 }
 
 func NearDupeHashes(labels []string, values []string, options NearDupeHashOptions) []string {
@@ -60,6 +63,20 @@ func NearDupeHashes(labels []string, values []string, options NearDupeHashOption
 	cOptions.name_only_keys = C.bool(options.NameOnlyKeys)
 	cOptions.address_only_keys = C.bool(options.AddressOnlyKeys)
 
+	cNumLanguages := C.size_t(0)
+	var cLanguages []*C.char
+
+	if options.Languages != nil {
+		cLanguages = make([]*C.char, len(options.Languages))
+		cNumLanguages = C.size_t(len(options.Languages))
+
+		for i := 0; i < len(options.Languages); i++ {
+			cLang := C.CString(options.Languages[i])
+			defer C.free(unsafe.Pointer(cLang))
+			cLanguages[i] = cLang
+		}
+	}
+
 	cLabels := make([]*C.char, len(labels))
 	for i, label := range labels {
 		cLabel := C.CString(label)
@@ -76,7 +93,13 @@ func NearDupeHashes(labels []string, values []string, options NearDupeHashOption
 
 	cNumComponents := C.ulong(len(labels))
 	cNumHashes := C.size_t(0)
-	cHashes := C.libpostal_near_dupe_hashes(cNumComponents, &cLabels[0], &cValues[0], cOptions, &cNumHashes)
+
+	var cHashes **C.char
+	if cNumLanguages > 0 {
+		cHashes = C.libpostal_near_dupe_hashes_languages(cNumComponents, &cLabels[0], &cValues[0], cOptions, cNumLanguages, &cLanguages[0], &cNumHashes)
+	} else {
+		cHashes = C.libpostal_near_dupe_hashes(cNumComponents, &cLabels[0], &cValues[0], cOptions, &cNumHashes)
+	}
 	numHashes := uint64(cNumHashes)
 
 	cHashesPtr := (*[1 << 28](*C.char))(unsafe.Pointer(cHashes))
@@ -88,8 +111,6 @@ func NearDupeHashes(labels []string, values []string, options NearDupeHashOption
 	}
 
 	C.libpostal_expansion_array_destroy(cHashes, cNumHashes)
-	// C.libpostal_expansion_array_destroy(&cLabels[0], cNumComponents)
-	// C.libpostal_expansion_array_destroy(&cValues[0], cNumComponents)
 
 	return hashes
 }

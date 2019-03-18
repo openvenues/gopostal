@@ -13,6 +13,14 @@ import (
 )
 
 func ExpandAddress(address string, options NormalizeOptions) []string {
+	return expandAddress(address, false, options)
+}
+
+func ExpandAddressRoot(address string, options NormalizeOptions) []string {
+	return expandAddress(address, true, options)
+}
+
+func expandAddress(address string, root bool, options NormalizeOptions) []string {
 	if !utf8.ValidString(address) {
 		return nil
 	}
@@ -63,13 +71,17 @@ func ExpandAddress(address string, options NormalizeOptions) []string {
 
 	var cNumExpansions = C.size_t(0)
 
-	cExpansions := C.libpostal_expand_address(cAddress, cOptions, &cNumExpansions)
+	var cExpansions **C.char
+	if root {
+		cExpansions = C.libpostal_expand_address_root(cAddress, cOptions, &cNumExpansions)
+	} else {
+		cExpansions = C.libpostal_expand_address(cAddress, cOptions, &cNumExpansions)
+	}
 
 	numExpansions := uint64(cNumExpansions)
 
 	var expansions = make([]string, numExpansions)
 
-	// Accessing a C array
 	cExpansionsPtr := (*[1 << 30](*C.char))(unsafe.Pointer(cExpansions))
 
 	var i uint64
