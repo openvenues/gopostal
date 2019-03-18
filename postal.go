@@ -4,7 +4,6 @@ package postal
 #cgo pkg-config: libpostal
 #include <libpostal/libpostal.h>
 #include <stdlib.h>
-
 */
 import "C"
 
@@ -13,16 +12,11 @@ import (
 )
 
 func init() {
-	if !bool(C.libpostal_setup()) ||
-		!bool(C.libpostal_setup_language_classifier()) ||
-		!bool(C.libpostal_setup_parser()) {
+	if !bool(C.libpostal_setup()) || !bool(C.libpostal_setup_language_classifier()) {
+		// if !bool(C.libpostal_setup()) || !bool(C.libpostal_setup_language_classifier()) || !bool(C.libpostal_setup_parser() {
 		log.Fatal("Could not load libpostal")
 	}
 }
-
-var (
-	cDefaultOptions = C.libpostal_get_default_options()
-)
 
 type AddressComponent uint16
 
@@ -42,4 +36,29 @@ const (
 	AddressPostalCode  AddressComponent = C.LIBPOSTAL_ADDRESS_POSTAL_CODE
 	AddressPoBox       AddressComponent = C.LIBPOSTAL_ADDRESS_PO_BOX
 	AddressAll         AddressComponent = C.LIBPOSTAL_ADDRESS_ALL
+)
+
+const (
+	AddressParserLabelHouse         = "house"
+	AddressParserLabelHouseNumber   = "house_number"
+	AddressParserLabelPoBox         = "po_box"
+	AddressParserLabelBuilding      = "building"
+	AddressParserLabelEntrance      = "entrance"
+	AddressParserLabelStaircase     = "staircase"
+	AddressParserLabelLevel         = "level"
+	AddressParserLabelUnit          = "unit"
+	AddressParserLabelRoad          = "road"
+	AddressParserLabelMetroStation  = "metro_station"
+	AddressParserLabelSuburb        = "suburb"
+	AddressParserLabelCityDistrict  = "city_district"
+	AddressParserLabelCity          = "city"
+	AddressParserLabelStateDistrict = "state_district"
+	AddressParserLabelIsland        = "island"
+	AddressParserLabelState         = "state"
+	AddressParserLabelPostalCode    = "postcode"
+	AddressParserLabelCountryRegion = "country_region"
+	AddressParserLabelCountry       = "country"
+	AddressParserLabelWorldRegion   = "world_region"
+	AddressParserLabelWebsite       = "website"
+	AddressParserLabelTelephone     = "phone"
 )

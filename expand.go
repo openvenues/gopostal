@@ -4,7 +4,6 @@ package postal
 #cgo pkg-config: libpostal
 #include <libpostal/libpostal.h>
 #include <stdlib.h>
-
 */
 import "C"
 
