@@ -8,8 +8,13 @@ package postal
 import "C"
 
 import (
+	"log"
 	"unicode/utf8"
 	"unsafe"
+)
+
+var (
+	parserLoaded = false
 )
 
 type ParserOptions struct {
@@ -26,7 +31,22 @@ type ParsedComponent struct {
 	Value string `json:"value"`
 }
 
+func setupParser() {
+	if !parserLoaded {
+		parserLoaded = bool(C.libpostal_setup_parser())
+	}
+	if !parserLoaded {
+		log.Fatalf("Could not load libpostal_setup_parser")
+	}
+}
+
+func teardownParser() {
+	C.libpostal_teardown_parser()
+}
+
 func ParseAddress(address string, options ParserOptions) []ParsedComponent {
+	setupParser()
+
 	if !utf8.ValidString(address) {
 		return nil
 	}

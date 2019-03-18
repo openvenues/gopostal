@@ -26,9 +26,6 @@ func Setup() error {
 	if !bool(C.libpostal_setup_language_classifier()) {
 		return fmt.Errorf("Could not load libpostal_setup_language_classifier")
 	}
-	if !bool(C.libpostal_setup_parser()) {
-		return fmt.Errorf("Could not load libpostal_setup_parser")
-	}
 
 	return nil
 }
@@ -36,7 +33,6 @@ func Setup() error {
 func Teardown() {
 	C.libpostal_teardown()
 	C.libpostal_teardown_language_classifier()
-	C.libpostal_teardown_parser()
 }
 
 const (
